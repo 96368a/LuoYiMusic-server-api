@@ -47,3 +47,7 @@ func Login(username string, password string) (*model.User, error) {
 	}
 	return &user, nil
 }
+
+func UpdateUser(user *model.User) error {
+	return model.DB.Save(user).Error
+}

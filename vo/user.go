@@ -2,12 +2,6 @@ package vo
 
 import "github.com/96368a/LuoYiMusic-server-api/model"
 
-type UserVo struct {
-	Nickname string `json:"nickname"`                    // 昵称
-	Username string `json:"username" binding:"required"` // 用户名
-	Password string `json:"password" binding:"required"` // 用户密码
-}
-
 type UserInfoVo struct {
 	ID        uint64 `json:"id"`                           //用户id
 	Nickname  string `json:"nickname"`                     // 昵称

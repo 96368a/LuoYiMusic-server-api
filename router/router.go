@@ -14,6 +14,7 @@ func InitRouter() *gin.Engine {
 	userGroup := r.Group("/user")
 	userGroup.POST("/register", controller.Register)
 	userGroup.POST("/login", controller.Login)
+	userGroup.POST("/update", middleware.AuthMiddleware(), controller.UpdateUser)
 	userGroup.GET("/info", middleware.AuthMiddleware(), controller.UserInfo)
 
 	return r
