@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/96368a/LuoYiMusic-server-api/model"
 	"github.com/96368a/LuoYiMusic-server-api/services"
 	"github.com/96368a/LuoYiMusic-server-api/utils"
 	"github.com/96368a/LuoYiMusic-server-api/vo"
@@ -20,7 +21,12 @@ func Register(c *gin.Context) {
 		utils.Fail(c, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}
-	utils.Success(c, gin.H{"user": vo.ToUserVO(*newUser)}, "注册成功")
+	token, err := utils.ReleaseToken(*newUser)
+	if err != nil {
+		utils.Fail(c, http.StatusInternalServerError, "token生成失败", nil)
+	}
+	c.Header("Authorization", token)
+	utils.Success(c, gin.H{"token": token}, "注册成功")
 }
 
 func Login(c *gin.Context) {
@@ -35,5 +41,19 @@ func Login(c *gin.Context) {
 		utils.Fail(c, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}
-	utils.Success(c, gin.H{"user": vo.ToUserVO(*loginUser)}, "登录成功")
+	token, err := utils.ReleaseToken(*loginUser)
+	if err != nil {
+		utils.Fail(c, http.StatusInternalServerError, "token生成失败", nil)
+	}
+	c.Header("Authorization", token)
+	utils.Success(c, gin.H{
+		"token": token,
+	}, "登录成功")
+}
+
+func UserInfo(c *gin.Context) {
+	user, _ := c.Get("user")
+	utils.Success(c, gin.H{
+		"user": vo.ToUserVO(user.(model.User)),
+	}, "获取成功")
 }
