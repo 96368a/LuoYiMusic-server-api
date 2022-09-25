@@ -13,7 +13,7 @@ func CheckUserName(username string) bool {
 	return err != nil
 }
 
-func Register(nickname string, username string, password string) (*model.User, error) {
+func AddUser(nickname string, username string, password string) (*model.User, error) {
 	if ok := CheckUserName(username); ok != true {
 		return nil, errors.New("用户已存在")
 	}

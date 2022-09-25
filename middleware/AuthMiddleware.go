@@ -70,6 +70,8 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 				"code": 401,
 				"msg":  "哼，想越权？",
 			})
+			ctx.Abort()
+			return
 		}
 
 		ctx.Next()
