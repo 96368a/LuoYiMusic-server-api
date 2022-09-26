@@ -58,28 +58,18 @@ func UpdateUser(c *gin.Context) {
 	c.ShouldBind(&user)
 	//拿到当前登录用户，并在数据库中查找
 	sessionUser, _ := c.Get("user")
-	var dbUser model.User
-	model.DB.First(&dbUser, sessionUser.(model.User).ID)
 
 	if user.Nickname != "" && len(user.Nickname) < 4 {
 		utils.Fail(c, http.StatusBadRequest, "昵称长度至少为4", nil)
 		return
-	} else {
-		dbUser.Nickname = user.Nickname
 	}
 
-	if user.Signature != "" {
-		dbUser.Signature = user.Signature
-	}
-
-	err := services.UpdateUser(&dbUser)
+	err := services.UpdateUser(sessionUser.(model.User).ID, user.Nickname, user.Signature)
 	if err != nil {
 		utils.Fail(c, http.StatusInternalServerError, "更新失败", nil)
 		return
 	}
-	utils.Success(c, gin.H{
-		"user": vo.ToUserVO(dbUser),
-	}, "更新成功")
+	utils.Success(c, nil, "更新成功")
 }
 
 func ChangePassword(c *gin.Context) {
@@ -89,25 +79,17 @@ func ChangePassword(c *gin.Context) {
 		utils.Fail(c, http.StatusBadRequest, "参数错误", nil)
 		return
 	}
-	//拿到当前登录用户，并在数据库中查找
+	//拿到当前登录用户
 	sessionUser, _ := c.Get("user")
-	var dbUser model.User
-	model.DB.First(&dbUser, sessionUser.(model.User).ID)
 
-	err = bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.OldPassword))
+	err = bcrypt.CompareHashAndPassword([]byte(sessionUser.(model.User).Password), []byte(user.OldPassword))
 	if err != nil {
 		utils.Fail(c, http.StatusBadRequest, "原密码不正确", nil)
 		return
 	}
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	err = services.UpdatePassword(sessionUser.(model.User).ID, user.Password)
 	if err != nil {
 		utils.Fail(c, http.StatusInternalServerError, "内部错误", nil)
-		return
-	}
-	dbUser.Password = string(hashPassword)
-	err = services.UpdateUser(&dbUser)
-	if err != nil {
-		utils.Fail(c, http.StatusInternalServerError, "密码更改失败", nil)
 		return
 	}
 	utils.Success(c, nil, "密码更新成功")

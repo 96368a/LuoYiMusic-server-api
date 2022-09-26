@@ -8,6 +8,6 @@ type User struct {
 	Nickname  string `json:"nickname"`               // 昵称
 	Password  string `json:"password"`               // 用户密码
 	Signature string `json:"signature"`              // 个性签名
-	IsAdmin   int    `json:"isAdmin"`
+	IsAdmin   int    `json:"isAdmin" gorm:"column:isadmin"`
 	gorm.Model
 }

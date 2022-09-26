@@ -17,3 +17,11 @@ func ToUserVO(user model.User) UserInfoVo {
 		Signature: user.Signature,
 	}
 }
+
+func ToUserVOs(users []model.User) []UserInfoVo {
+	userVos := make([]UserInfoVo, len(users))
+	for i, user := range users {
+		userVos[i] = ToUserVO(user)
+	}
+	return userVos
+}

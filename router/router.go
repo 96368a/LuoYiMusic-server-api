@@ -20,9 +20,12 @@ func InitRouter() *gin.Engine {
 	userGroup.POST("/changePassword", middleware.AuthMiddleware(), controller.ChangePassword)
 
 	apiGroup := r.Group("/api", middleware.AuthMiddleware(), middleware.AdminAuthMiddleware())
+	apiGroup.GET("/users", api.GetAllUsers)
 	apiGroup.POST("/user/add", api.AddUser)
 	apiGroup.POST("/user/update", api.UpdateUser)
 	apiGroup.POST("/user/changePassword", api.ChangePassword)
+	apiGroup.POST("/user/setAdmin", api.SetAdmin)
+	apiGroup.POST("/user/removeAdmin", api.RemoveAdmin)
 
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{
