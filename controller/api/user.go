@@ -90,7 +90,7 @@ func GetAllUsers(c *gin.Context) {
 func SetAdmin(c *gin.Context) {
 	var user dto.UserDto
 	c.ShouldBind(&user)
-	if user.ID < 0 {
+	if user.ID <= 0 {
 		utils.Fail(c, http.StatusBadRequest, "参数错误", nil)
 		return
 	}
@@ -106,7 +106,7 @@ func RemoveAdmin(c *gin.Context) {
 	var user dto.UserDto
 	c.ShouldBind(&user)
 
-	if user.ID < 0 {
+	if user.ID <= 0 {
 		utils.Fail(c, http.StatusBadRequest, "参数错误", nil)
 		return
 	}

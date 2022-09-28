@@ -12,6 +12,8 @@ func InitRouter() *gin.Engine {
 	//跨域处理
 	r.Use(middleware.CORSMiddleware())
 
+	r.GET("/song", controller.SongById)
+
 	userGroup := r.Group("/user")
 	userGroup.POST("/register", controller.Register)
 	userGroup.POST("/login", controller.Login)
@@ -26,6 +28,9 @@ func InitRouter() *gin.Engine {
 	apiGroup.POST("/user/changePassword", api.ChangePassword)
 	apiGroup.POST("/user/setAdmin", api.SetAdmin)
 	apiGroup.POST("/user/removeAdmin", api.RemoveAdmin)
+
+	apiGroup.POST("/song/add", api.AddArtist)
+	apiGroup.POST("/song/uploads", api.SongUploads)
 
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{

@@ -1,5 +1,7 @@
 .idea/
+res/
 *.db
+*.mp3
 
 # Binaries for programs and plugins
 *.exe
