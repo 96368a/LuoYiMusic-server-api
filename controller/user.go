@@ -34,7 +34,7 @@ func Register(c *gin.Context) {
 func Login(c *gin.Context) {
 	var user dto.UserDto
 	c.ShouldBind(&user)
-	if len(user.Username) < 4 || len(user.Password) < 6 {
+	if len(user.Username) < 4 || len(user.Password) < 4 {
 		utils.Fail(c, http.StatusBadRequest, "参数错误", nil)
 		return
 	}

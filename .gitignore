@@ -1,5 +1,5 @@
 .idea/
-res/
+resources/
 *.db
 *.mp3
 

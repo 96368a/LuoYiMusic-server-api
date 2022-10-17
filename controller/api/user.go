@@ -87,6 +87,35 @@ func GetAllUsers(c *gin.Context) {
 	}, "获取成功")
 }
 
+func SearchUsers(c *gin.Context) {
+	var page dto.Page
+	err := c.ShouldBind(&page)
+
+	if err != nil {
+		utils.Fail(c, http.StatusBadRequest, "参数错误", nil)
+		return
+	}
+	if page.PageSize == 0 {
+		page.PageSize = 5
+	}
+	name := c.Query("name")
+	//if name == "" {
+	//	utils.Fail(c, 400, "参数错误", nil)
+	//	return
+	//}
+	users, count, err := services.SearchUsers(name, page.PageSize, page.Page)
+	if err != nil {
+		utils.Fail(c, 500, "内部错误", nil)
+		return
+	}
+	utils.Success(c, gin.H{
+		"users":       vo.ToUserVOs(users),
+		"currentPage": page.Page,
+		"pageSize":    page.PageSize,
+		"total":       count,
+	}, "获取成功")
+}
+
 func SetAdmin(c *gin.Context) {
 	var user dto.UserDto
 	c.ShouldBind(&user)

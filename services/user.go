@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"github.com/96368a/LuoYiMusic-server-api/model"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -87,6 +88,20 @@ func GetAllUsers(pageSize int, page int) ([]model.User, int64, error) {
 	var count int64
 	model.DB.Limit(pageSize).Offset((page - 1) * pageSize).Find(&users)
 	model.DB.Model(&model.User{}).Count(&count)
+	return users, count, nil
+}
+
+func SearchUsers(name string, pageSize int, page int) ([]model.User, int64, error) {
+	var users []model.User
+	name = fmt.Sprintf("%%%s%%", name)
+	var count int64
+	db := model.DB.Model(&model.User{}).Where("username Like ?", name).Or("nickname Like ?", name).Count(&count)
+	if count > (int64)((page-1)*pageSize) {
+		db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&users)
+	} else {
+		db.Find(&users)
+	}
+	//model.DB.Model(&model.User{}).Where("username Like ?", name).Or("nickname Like ?", name).Count(&count)
 	return users, count, nil
 }
 

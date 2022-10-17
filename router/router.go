@@ -23,6 +23,7 @@ func InitRouter() *gin.Engine {
 
 	apiGroup := r.Group("/api", middleware.AuthMiddleware(), middleware.AdminAuthMiddleware())
 	apiGroup.GET("/users", api.GetAllUsers)
+	apiGroup.GET("/user/search", api.SearchUsers)
 	apiGroup.POST("/user/add", api.AddUser)
 	apiGroup.POST("/user/update", api.UpdateUser)
 	apiGroup.POST("/user/changePassword", api.ChangePassword)

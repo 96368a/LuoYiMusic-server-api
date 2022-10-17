@@ -18,5 +18,5 @@ func Success(ctx *gin.Context, data gin.H, msg string) {
 }
 
 func Fail(ctx *gin.Context, code int, msg string, data gin.H) {
-	Response(ctx, code, code, data, msg)
+	Response(ctx, http.StatusOK, code, data, msg)
 }
