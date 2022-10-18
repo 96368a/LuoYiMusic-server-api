@@ -7,6 +7,7 @@ type UserInfoVo struct {
 	Nickname  string `json:"nickname"`                     // 昵称
 	Username  string `json:"username" binding:"required"`  // 用户名
 	Signature string `json:"signature" binding:"required"` //用户签名
+	IsAdmin   int    `json:"is_admin"`                     //用户是否为管理员
 }
 
 func ToUserVO(user model.User) UserInfoVo {
@@ -15,6 +16,7 @@ func ToUserVO(user model.User) UserInfoVo {
 		Nickname:  user.Nickname,
 		Username:  user.Username,
 		Signature: user.Signature,
+		IsAdmin:   user.IsAdmin,
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/96368a/LuoYiMusic-server-api/dto"
 	"github.com/96368a/LuoYiMusic-server-api/model"
+	"github.com/96368a/LuoYiMusic-server-api/services"
 	"github.com/dhowden/tag"
 	"gorm.io/datatypes"
 	"log"
@@ -17,9 +18,30 @@ func Test() {
 	//services.AddArtist("test")
 	//ok, _ := services.CheckArtist("ttest")
 	//fmt.Printf("%v\n", ok)
-
+	InitData()
 }
 
+func InitData() {
+	_, count, err := services.SearchUsers("", 5, 1)
+	if err != nil {
+		return
+	}
+	if count == 0 {
+		user, err := services.AddUser("管理员", "admin", "123456")
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		services.SetAdminUser(user.ID)
+		for i := 0; i < 20; i++ {
+			fmt.Printf("test1\n")
+			nickname := fmt.Sprintf("昵称%d", i)
+			username := fmt.Sprintf("user%d", i)
+			services.AddUser(nickname, username, username)
+		}
+	}
+
+}
 func testSongId3() {
 	f, _ := os.Open("resources/musics/1.mp3")
 	m, err := tag.ReadFrom(f)

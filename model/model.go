@@ -4,14 +4,19 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"log"
+	"os"
 )
 
 var DB *gorm.DB
 
 func init() {
+	var err error
+	_, err = os.Lstat("db/")
+	if os.IsNotExist(err) {
+		os.Mkdir("db/", 0755)
+	}
 	dbConnect := sqlite.Open("db/db.db")
 
-	var err error
 	DB, err = gorm.Open(dbConnect, &gorm.Config{})
 	if err != nil {
 		log.Fatal("数据库连接失败...")
