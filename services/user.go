@@ -32,6 +32,14 @@ func AddUser(nickname string, username string, password string) (*model.User, er
 	}
 	return &user, nil
 }
+func DelUser(id uint64) error {
+	var user model.User
+	err := model.DB.First(&user, id).Error
+	if err != nil {
+		return err
+	}
+	return model.DB.Delete(&user, id).Error
+}
 
 func Login(username string, password string) (*model.User, error) {
 	var user model.User

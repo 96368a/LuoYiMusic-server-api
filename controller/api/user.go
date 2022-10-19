@@ -1,12 +1,14 @@
 package api
 
 import (
+	"errors"
 	"github.com/96368a/LuoYiMusic-server-api/dto"
 	"github.com/96368a/LuoYiMusic-server-api/model"
 	"github.com/96368a/LuoYiMusic-server-api/services"
 	"github.com/96368a/LuoYiMusic-server-api/utils"
 	"github.com/96368a/LuoYiMusic-server-api/vo"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"net/http"
 )
 
@@ -23,6 +25,31 @@ func AddUser(c *gin.Context) {
 		return
 	}
 	utils.Success(c, gin.H{"user": newUser}, "用户添加成功")
+}
+
+func DelUser(c *gin.Context) {
+	var user dto.UserDto
+	c.ShouldBind(&user)
+	if user.ID <= 0 {
+		utils.Fail(c, http.StatusBadRequest, "参数错误", nil)
+		return
+	}
+	sessionUser, _ := c.Get("user")
+	if sessionUser.(model.User).ID == user.ID {
+		utils.Fail(c, http.StatusBadRequest, "不能删除自己！", nil)
+		return
+	}
+
+	err := services.DelUser(user.ID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			utils.Fail(c, http.StatusBadRequest, "用户不存在", nil)
+		} else {
+			utils.Fail(c, http.StatusInternalServerError, "内部错误", nil)
+		}
+		return
+	}
+	utils.Success(c, nil, "删除成功")
 }
 
 func UpdateUser(c *gin.Context) {
