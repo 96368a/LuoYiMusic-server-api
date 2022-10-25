@@ -27,8 +27,9 @@ func testSearch() {
 	if err != nil {
 		return
 	}
+	songss := services.GetSongInfos(songs)
+	fmt.Printf("%v", songss)
 	for _, song := range songs {
-
 		fmt.Printf("%v \n", song)
 	}
 }

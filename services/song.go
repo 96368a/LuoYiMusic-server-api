@@ -50,3 +50,24 @@ func SearchSong(name string, pageSize int, page int) ([]model.Song, int64, error
 	}
 	return songs, count, nil
 }
+
+func GetSongInfo(song model.Song) model.SongInfo {
+	songInfo := model.SongInfo{
+		ID:    song.ID,
+		Name:  song.Name,
+		Alias: song.Alias,
+		Hash:  song.Hash,
+	}
+	var artistIds []uint64
+	json.Unmarshal(song.Artists, &artistIds)
+	model.DB.Where("id = ?", song.Album).Find(&songInfo.Album)
+	model.DB.Find(&songInfo.Artists, artistIds)
+	return songInfo
+}
+func GetSongInfos(songs []model.Song) []model.SongInfo {
+	songInfos := make([]model.SongInfo, len(songs))
+	for i, song := range songs {
+		songInfos[i] = GetSongInfo(song)
+	}
+	return songInfos
+}

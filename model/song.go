@@ -15,7 +15,7 @@ type Song struct {
 	gorm.Model
 }
 
-type SongResult struct {
+type SongInfo struct {
 	ID      uint64         `json:"id" gorm:"primary_key;"` // 歌曲id
 	Name    string         `json:"name"`                   // 歌曲名
 	Album   Album          `json:"album"`                  // 所属专辑id
