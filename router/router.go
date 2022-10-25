@@ -14,6 +14,9 @@ func InitRouter() *gin.Engine {
 
 	r.GET("/song", controller.SongById)
 
+	songGroup := r.Group("/song")
+	songGroup.GET("/search", controller.SearchSongs)
+
 	userGroup := r.Group("/user")
 	userGroup.POST("/register", controller.Register)
 	userGroup.POST("/login", controller.Login)

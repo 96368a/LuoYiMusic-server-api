@@ -1,6 +1,8 @@
 package vo
 
-import "github.com/96368a/LuoYiMusic-server-api/model"
+import (
+	"github.com/96368a/LuoYiMusic-server-api/model"
+)
 
 type UserInfoVo struct {
 	ID        uint64 `json:"id"`                           //用户id

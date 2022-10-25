@@ -104,12 +104,14 @@ func SearchUsers(name string, pageSize int, page int) ([]model.User, int64, erro
 	name = fmt.Sprintf("%%%s%%", name)
 	var count int64
 	db := model.DB.Model(&model.User{}).Where("username Like ?", name).Or("nickname Like ?", name).Count(&count)
+	if page < 1 {
+		page = 1
+	}
 	if count > (int64)((page-1)*pageSize) {
 		db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&users)
 	} else {
 		db.Find(&users)
 	}
-	//model.DB.Model(&model.User{}).Where("username Like ?", name).Or("nickname Like ?", name).Count(&count)
 	return users, count, nil
 }
 

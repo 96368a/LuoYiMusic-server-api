@@ -24,40 +24,42 @@ func SongUploads(c *gin.Context) {
 		// 上传文件至指定目录
 		f, _ := file.Open()
 		songInfo, _ := tag.ReadFrom(f)
+		//检查是否为正确的歌曲文件
+		if songInfo != nil {
 
-		//依次检查歌手、专辑、歌曲是否存在，不存在则新建
-		artists := strings.Split(songInfo.Artist(), "/")
-		artistIds := make([]uint64, len(artists))
-		var artist *model.Artist
-		//检查歌手列表
-		for i, name := range artists {
-			art, ok := services.CheckArtist(name)
+			//依次检查歌手、专辑、歌曲是否存在，不存在则新建
+			artists := strings.Split(songInfo.Artist(), "/")
+			artistIds := make([]uint64, len(artists))
+			var artist *model.Artist
+			//检查歌手列表
+			for i, name := range artists {
+				art, ok := services.CheckArtist(name)
+				if !ok {
+					art, _ = services.AddArtist(name)
+				}
+				artistIds[i] = art.ID
+				if i == 0 {
+					artist = art
+				}
+			}
+			//检查专辑
+			album, ok := services.CheckAlbum(songInfo.Album())
 			if !ok {
-				art, _ = services.AddArtist(name)
+				album, _ = services.AddAlbum(songInfo.Album(), artist.ID)
 			}
-			artistIds[i] = art.ID
-			if i == 0 {
-				artist = art
+
+			song, ok := services.CheckSong(songInfo.Title(), album.ID)
+			if !ok {
+				song, _ = services.AddSong(songInfo.Title(), album.ID, artistIds, fileHash)
 			}
-		}
-		//检查专辑
-		album, ok := services.CheckAlbum(songInfo.Album())
-		if !ok {
-			album, _ = services.AddAlbum(songInfo.Album(), artist.ID)
-		}
 
-		song, ok := services.CheckSong(songInfo.Title(), album.ID)
-		if !ok {
-			song, _ = services.AddSong(songInfo.Title(), album.ID, artistIds, fileHash)
-		}
+			fmt.Printf("%v\n", song)
+			err := c.SaveUploadedFile(file, dst)
 
-		fmt.Printf("%v\n", song)
-		err := c.SaveUploadedFile(file, dst)
-
-		if err != nil {
-			utils.Fail(c, http.StatusInternalServerError, "内部错误", nil)
-
-			return
+			if err != nil {
+				utils.Fail(c, http.StatusInternalServerError, "内部错误", nil)
+				return
+			}
 		}
 	}
 	utils.Success(c, gin.H{

@@ -18,7 +18,19 @@ func Test() {
 	//services.AddArtist("test")
 	//ok, _ := services.CheckArtist("ttest")
 	//fmt.Printf("%v\n", ok)
-	InitData()
+	//InitData()
+	testSearch()
+}
+
+func testSearch() {
+	songs, _, err := services.SearchSong("c", 2, 1)
+	if err != nil {
+		return
+	}
+	for _, song := range songs {
+
+		fmt.Printf("%v \n", song)
+	}
 }
 
 func InitData() {
