@@ -45,8 +45,8 @@ func SearchSong(name string, pageSize int, page int) ([]model.Song, int64, error
 		return nil, 0, db.Error
 	}
 	count = int64(len(songs))
-	if count > (int64)(pageSize) {
-		songs = songs[(page-1)*pageSize : pageSize]
+	if count > (int64)((page-1)*pageSize+pageSize) {
+		songs = songs[(page-1)*pageSize : (page-1)*pageSize+pageSize]
 	}
 	return songs, count, nil
 }
