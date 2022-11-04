@@ -41,7 +41,7 @@ func SearchSong(name string, pageSize int, page int) ([]model.Song, int64, error
 		page = 1
 	}
 	var count int64
-	db := model.DB.Raw("SELECT songs.* from songs WHERE songs.name like ? union SELECT songs.* from songs,json_each(songs.artists) v1 WHERE v1.value = (SELECT id FROM artists WHERE name like ?)", name, name).Scan(&songs)
+	db := model.DB.Raw("SELECT songs.* from songs WHERE songs.name like ? AND deleted_at IS NULL union SELECT songs.* from songs,json_each(songs.artists) v1 WHERE v1.value = (SELECT id FROM artists WHERE name like ?) AND deleted_at IS NULL", name, name).Scan(&songs)
 	if db.Error != nil {
 		return nil, 0, db.Error
 	}
