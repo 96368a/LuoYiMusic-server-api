@@ -2,8 +2,9 @@ package api
 
 import (
 	"fmt"
+	"github.com/96368a/LuoYiMusic-server-api/dto"
 	"github.com/96368a/LuoYiMusic-server-api/model"
-	"github.com/96368a/LuoYiMusic-server-api/services"
+	services "github.com/96368a/LuoYiMusic-server-api/services"
 	"github.com/96368a/LuoYiMusic-server-api/utils"
 	"github.com/dhowden/tag"
 	"github.com/gin-gonic/gin"
@@ -65,4 +66,19 @@ func SongUploads(c *gin.Context) {
 	utils.Success(c, gin.H{
 		"data": len(files),
 	}, "上传成功")
+}
+
+func DelSong(c *gin.Context) {
+	var song dto.SongDto
+	c.ShouldBind(&song)
+	if song.ID <= 0 {
+		utils.Fail(c, http.StatusBadRequest, "参数错误", nil)
+		return
+	}
+	err := services.DelSong(song.ID)
+	if err != nil {
+		utils.Fail(c, http.StatusInternalServerError, err.Error(), nil)
+		return
+	}
+	utils.Success(c, nil, "删除成功")
 }

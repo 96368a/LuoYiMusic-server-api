@@ -36,6 +36,10 @@ func InitRouter() *gin.Engine {
 
 	apiGroup.POST("/song/add", api.AddArtist)
 	apiGroup.POST("/song/uploads", api.SongUploads)
+	apiGroup.POST("/song/del", api.DelSong)
+
+	apiGroup.POST("/artist/del", api.DelArtist)
+	apiGroup.POST("/album/del", api.DelAlbum)
 
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{

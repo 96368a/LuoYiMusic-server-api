@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/96368a/LuoYiMusic-server-api/model"
 )
@@ -74,4 +75,13 @@ func GetSongInfos(songs []model.Song) []model.SongInfo {
 		songInfos[i] = GetSongInfo(song)
 	}
 	return songInfos
+}
+
+func DelSong(id uint64) error {
+	song := model.Song{}
+	db := model.DB.First(&song, id)
+	if db.Error != nil {
+		return errors.New("歌曲不存在")
+	}
+	return db.Delete(&song).Error
 }
