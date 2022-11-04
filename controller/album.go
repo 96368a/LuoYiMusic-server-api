@@ -27,7 +27,7 @@ func SearchAlbums(c *gin.Context) {
 		return
 	}
 	utils.Success(c, gin.H{
-		"users":       vo.ToAlbumVos(albums),
+		"data":        vo.ToAlbumVos(albums),
 		"currentPage": page.Page,
 		"pageSize":    page.PageSize,
 		"total":       count,

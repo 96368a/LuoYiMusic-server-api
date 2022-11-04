@@ -37,13 +37,17 @@ func CheckAlbum(name string) (*model.Album, bool) {
 
 func DelAlbum(id uint64) error {
 	album := model.Album{}
+	var songs []model.Song
 	db := model.DB.First(&album, id)
 	if db.Error != nil {
 		return errors.New("专辑不存在")
 	}
-	err := model.DB.Delete(&model.Song{}, "album = ?", album.ID).Error
-	if err != nil {
-		return err
+	model.DB.Where("album = ?", album.ID).Find(&songs)
+	for _, song := range songs {
+		err := DelSong(song.ID)
+		if err != nil {
+			return err
+		}
 	}
 	return db.Delete(&album).Error
 }

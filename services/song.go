@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/96368a/LuoYiMusic-server-api/model"
+	"os"
 )
 
 func AddSong(name string, albumId uint64, artistIds []uint64, hash string) (*model.Song, error) {
@@ -83,5 +84,7 @@ func DelSong(id uint64) error {
 	if db.Error != nil {
 		return errors.New("歌曲不存在")
 	}
+	songFile := fmt.Sprintf("./resources/musics/%s", song.Hash)
+	os.Remove(songFile)
 	return db.Delete(&song).Error
 }

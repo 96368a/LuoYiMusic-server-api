@@ -48,7 +48,7 @@ func SearchSongs(c *gin.Context) {
 		return
 	}
 	utils.Success(c, gin.H{
-		"users":       vo.ToSongInfoVos(songs),
+		"data":        vo.ToSongInfoVos(songs),
 		"currentPage": page.Page,
 		"pageSize":    page.PageSize,
 		"total":       count,

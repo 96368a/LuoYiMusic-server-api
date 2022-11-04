@@ -27,7 +27,7 @@ func SearchArtist(c *gin.Context) {
 		return
 	}
 	utils.Success(c, gin.H{
-		"users":       vo.ToArtistVos(artists),
+		"data":        vo.ToArtistVos(artists),
 		"currentPage": page.Page,
 		"pageSize":    page.PageSize,
 		"total":       count,
