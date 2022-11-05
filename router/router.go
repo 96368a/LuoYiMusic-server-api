@@ -47,6 +47,10 @@ func InitRouter() *gin.Engine {
 	apiGroup.POST("/artist/del", api.DelArtist)
 	apiGroup.POST("/album/del", api.DelAlbum)
 
+	apiGroup.POST("/playlist/add", api.AddPlaylist)
+	apiGroup.POST("/playlist/del", api.DelPlaylist)
+	apiGroup.GET("/playlist/search", api.SearchPlaylist)
+
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{
 			"code": 404,

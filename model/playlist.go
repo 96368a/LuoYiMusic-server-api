@@ -26,5 +26,6 @@ type PlaylistItems struct {
 	PlaylistID uint64 `json:"playlistId"` // 歌单id
 	SongID     uint64 `json:"songId"`     // 歌曲id
 	UserID     uint64 `json:"userId"`     // 添加用户id
+	Index      uint64 `json:"index"`
 	gorm.Model
 }
