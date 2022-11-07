@@ -23,6 +23,12 @@ func InitRouter() *gin.Engine {
 	artistGroup := r.Group("/artist")
 	artistGroup.GET("/search", controller.SearchArtist)
 
+	playListGroup := r.Group("/playlist")
+	playListGroup.GET("/search", controller.SearchPlaylist)
+	playListGroup.GET("/self", middleware.AuthMiddleware(), controller.SelfPlaylist)
+	playListGroup.POST("/add", middleware.AuthMiddleware(), controller.AddPlaylist)
+	playListGroup.POST("/del", middleware.AuthMiddleware(), controller.DelPlaylist)
+
 	userGroup := r.Group("/user")
 	userGroup.POST("/register", controller.Register)
 	userGroup.POST("/login", controller.Login)

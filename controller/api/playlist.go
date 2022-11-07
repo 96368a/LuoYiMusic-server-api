@@ -38,7 +38,7 @@ func SearchPlaylist(c *gin.Context) {
 		page.PageSize = 5
 	}
 	name := c.Query("name")
-	playlists, count, err := services.SearchPlaylist(name, page.PageSize, page.Page)
+	playlists, count, err := services.SearchPlaylist(name, page.PageSize, page.Page, nil)
 	if err != nil {
 		utils.Fail(c, 500, "内部错误", nil)
 		return
@@ -58,7 +58,7 @@ func DelPlaylist(c *gin.Context) {
 		utils.Fail(c, http.StatusBadRequest, "参数错误", nil)
 		return
 	}
-	err := services.DelPlaylist(playlistDto.ID)
+	err := services.DelPlaylist(playlistDto.ID, nil)
 	if err != nil {
 		utils.Fail(c, http.StatusInternalServerError, err.Error(), nil)
 		return
