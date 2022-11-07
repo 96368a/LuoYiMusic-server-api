@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/96368a/LuoYiMusic-server-api/dto"
 	"github.com/96368a/LuoYiMusic-server-api/model"
-	"github.com/96368a/LuoYiMusic-server-api/services"
+	services "github.com/96368a/LuoYiMusic-server-api/services"
 	"github.com/96368a/LuoYiMusic-server-api/utils"
 	"github.com/96368a/LuoYiMusic-server-api/vo"
 	"github.com/gin-gonic/gin"
@@ -92,4 +92,21 @@ func DelPlaylist(c *gin.Context) {
 		return
 	}
 	utils.Success(c, nil, "删除歌单成功")
+}
+
+func AddSongPlaylist(c *gin.Context) {
+	var playlistItem dto.PlaylistItemDto
+	c.ShouldBind(&playlistItem)
+	if playlistItem.PlaylistID <= 0 {
+		utils.Fail(c, http.StatusBadRequest, "参数错误", nil)
+		return
+	}
+	sessionUser, _ := c.Get("user")
+	user := sessionUser.(model.User)
+	err := services.AddSongPlaylist(playlistItem.PlaylistID, playlistItem.SongIDs, &user)
+	if err != nil {
+		utils.Fail(c, 500, err.Error(), nil)
+		return
+	}
+	utils.Success(c, nil, "添加成功")
 }

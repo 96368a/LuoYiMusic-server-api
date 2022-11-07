@@ -52,3 +52,38 @@ func DelPlaylist(id uint64, user *model.User) error {
 
 	return db.Delete(&playlist).Error
 }
+
+func AddSongPlaylist(playlistId uint64, songIds []uint64, user *model.User) error {
+	var playlist model.Playlist
+	err := model.DB.First(&playlist, playlistId).Error
+	if err != nil {
+		return errors.New("歌单不存在")
+	}
+	if playlist.UserID != user.ID {
+		return errors.New("越权操作！")
+	}
+	// 校验歌曲id
+	for _, songId := range songIds {
+		var song *model.Song
+		err := model.DB.First(&song, songId).Error
+		if err != nil {
+			return errors.New("歌曲id错误")
+		}
+	}
+	for _, songId := range songIds {
+		var item model.PlaylistItems
+		model.DB.Where("playlistId = ? and songId = ?", playlistId, songId).Find(&item)
+		if item.PlaylistID == 0 {
+			err := model.DB.Create(&model.PlaylistItems{
+				PlaylistID: playlistId,
+				SongID:     songId,
+				UserID:     user.ID,
+				Index:      0,
+			}).Error
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
