@@ -6,6 +6,7 @@ import (
 	"github.com/96368a/LuoYiMusic-server-api/model"
 	services "github.com/96368a/LuoYiMusic-server-api/services"
 	"github.com/96368a/LuoYiMusic-server-api/utils"
+	"github.com/96368a/LuoYiMusic-server-api/vo"
 	"github.com/dhowden/tag"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -64,11 +65,14 @@ func SongUploads(c *gin.Context) {
 				utils.Fail(c, http.StatusInternalServerError, "内部错误", nil)
 				return
 			}
+			utils.Success(c, gin.H{
+				"data":  vo.ToSongInfoVo(*song),
+				"count": len(files),
+			}, "上传成功")
+			return
 		}
 	}
-	utils.Success(c, gin.H{
-		"data": len(files),
-	}, "上传成功")
+	utils.Fail(c, http.StatusBadRequest, "文件类型错误", nil)
 }
 
 func DelSong(c *gin.Context) {
