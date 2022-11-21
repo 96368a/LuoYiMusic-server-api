@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/96368a/LuoYiMusic-server-api/dto"
-	"github.com/96368a/LuoYiMusic-server-api/services"
+	services "github.com/96368a/LuoYiMusic-server-api/services"
 	"github.com/96368a/LuoYiMusic-server-api/utils"
 	"github.com/96368a/LuoYiMusic-server-api/vo"
 	"github.com/gin-gonic/gin"
@@ -52,5 +52,28 @@ func SearchSongs(c *gin.Context) {
 		"currentPage": page.Page,
 		"pageSize":    page.PageSize,
 		"total":       count,
+	}, "获取成功")
+}
+
+func SongNews(c *gin.Context) {
+	var page dto.Page
+	err := c.ShouldBind(&page)
+
+	if err != nil {
+		utils.Fail(c, http.StatusBadRequest, "参数错误", nil)
+		return
+	}
+	if page.PageSize == 0 {
+		page.PageSize = 5
+	}
+	songs, err := services.SongNews(page.PageSize, page.Page)
+	if err != nil {
+		utils.Fail(c, 500, "内部错误", nil)
+		return
+	}
+	utils.Success(c, gin.H{
+		"data":        vo.ToSongInfoVos(songs),
+		"currentPage": page.Page,
+		"pageSize":    page.PageSize,
 	}, "获取成功")
 }

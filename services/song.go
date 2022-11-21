@@ -5,7 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/96368a/LuoYiMusic-server-api/model"
+	"math/rand"
 	"os"
+	"strconv"
+	"time"
 )
 
 func AddSong(name string, albumId uint64, artistIds []uint64, hash string) (*model.Song, error) {
@@ -57,6 +60,26 @@ func SearchSong(name string, pageSize int, page int) ([]model.Song, int64, error
 	return songs, count, nil
 }
 
+func SongNews(pageSize int, page int) ([]model.Song, error) {
+	var songs []model.Song
+	if page < 1 {
+		page = 1
+	}
+	var count int64
+	db := model.DB.Model(&model.Song{}).Order("created_at desc").Count(&count)
+	if db.Error != nil {
+		return nil, db.Error
+	}
+	count = int64(len(songs))
+	if count > (int64)((page-1)*pageSize) {
+		db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&songs)
+	} else {
+		db.Find(&songs)
+	}
+
+	return songs, nil
+}
+
 func GetSongInfo(song model.Song) model.SongInfo {
 	songInfo := model.SongInfo{
 		ID:    song.ID,
@@ -87,4 +110,23 @@ func DelSong(id uint64) error {
 	songFile := fmt.Sprintf("./resources/musics/%s", song.Hash)
 	os.Remove(songFile)
 	return db.Delete(&song).Error
+}
+
+func RecommendSongs() ([]model.Song, error) {
+	var songs []model.Song
+	newSongs := make([]model.Song, 20)
+	db := model.DB.Find(&songs)
+	if db.Error != nil {
+		return nil, db.Error
+	}
+	time, err := strconv.Atoi(time.Now().Format("20060102"))
+	if err != nil {
+		return nil, err
+	}
+	rand.Seed(int64(time))
+	for i, _ := range newSongs {
+		newSongs[i] = songs[rand.Intn(len(songs))]
+		rand.Seed(int64(rand.Int()))
+	}
+	return newSongs, nil
 }
