@@ -87,3 +87,17 @@ func AddSongPlaylist(playlistId uint64, songIds []uint64, user *model.User) erro
 	}
 	return nil
 }
+
+func PlaylistSongs(playlistId uint64) ([]model.Song, error) {
+	var playlist model.Playlist
+	err := model.DB.First(&playlist, playlistId).Error
+	if err != nil {
+		return nil, errors.New("歌单不存在")
+	}
+	var songs []model.Song
+	db := model.DB.Debug().Where("id in (?)", model.DB.Model(&model.PlaylistItems{}).Select("songId").Where("playlistId = ?", playlistId)).Find(&songs)
+	if db.Error != nil {
+		return nil, db.Error
+	}
+	return songs, nil
+}

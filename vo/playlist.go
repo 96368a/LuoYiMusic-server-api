@@ -2,6 +2,7 @@ package vo
 
 import (
 	"github.com/96368a/LuoYiMusic-server-api/model"
+	"github.com/96368a/LuoYiMusic-server-api/services"
 	"gorm.io/datatypes"
 )
 
@@ -19,15 +20,21 @@ type PlaylistVo struct {
 	SubscribedCount uint64         `json:"subscribedCount"` // 订阅次数
 	UpdateTime      uint64         `json:"updateTime"`      // 最后更新时间
 	UserID          uint64         `json:"userId"`
+	Songs           []SongInfoVo   `json:"songs"`
 }
 
 func ToPlaylistVo(playlist model.Playlist) PlaylistVo {
+	songs, err := services.PlaylistSongs(playlist.ID)
+	if err != nil {
+		return PlaylistVo{}
+	}
 	return PlaylistVo{
 		ID:          playlist.ID,
 		Name:        playlist.Name,
 		Description: playlist.Description,
 		Status:      playlist.Status,
 		UserID:      playlist.UserID,
+		Songs:       ToSongInfoVos(songs),
 	}
 }
 func ToPlaylistVos(playlists []model.Playlist) []PlaylistVo {
