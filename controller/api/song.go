@@ -14,7 +14,10 @@ import (
 )
 
 func SongUploads(c *gin.Context) {
-	form, _ := c.MultipartForm()
+	form, err := c.MultipartForm()
+	if err != nil {
+		utils.Fail(c, http.StatusBadRequest, "参数有误", nil)
+	}
 	files := form.File["file"]
 
 	for _, file := range files {
