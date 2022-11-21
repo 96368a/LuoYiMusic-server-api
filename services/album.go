@@ -51,3 +51,23 @@ func DelAlbum(id uint64) error {
 	}
 	return db.Delete(&album).Error
 }
+
+func AlbumNews(pageSize int, page int) ([]model.Album, error) {
+	var albums []model.Album
+	if page < 1 {
+		page = 1
+	}
+	var count int64
+	db := model.DB.Model(&model.Album{}).Order("created_at desc").Count(&count)
+	if db.Error != nil {
+		return nil, db.Error
+	}
+	count = int64(len(albums))
+	if count > (int64)((page-1)*pageSize) {
+		db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&albums)
+	} else {
+		db.Find(&albums)
+	}
+
+	return albums, nil
+}

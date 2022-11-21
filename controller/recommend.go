@@ -16,3 +16,13 @@ func RecommendSongs(c *gin.Context) {
 		"data": vo.ToSongInfoVos(songs),
 	}, "获取成功")
 }
+
+func RecommendPlaylists(c *gin.Context) {
+	playlists, err := services.RecommendPlaylists()
+	if err != nil {
+		utils.Fail(c, 500, "内部错误", nil)
+	}
+	utils.Success(c, gin.H{
+		"data": vo.ToPlaylistVos(playlists),
+	}, "获取成功")
+}

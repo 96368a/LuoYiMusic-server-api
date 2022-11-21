@@ -33,3 +33,26 @@ func SearchAlbums(c *gin.Context) {
 		"total":       count,
 	}, "获取成功")
 }
+
+func AlbumNews(c *gin.Context) {
+	var page dto.Page
+	err := c.ShouldBind(&page)
+
+	if err != nil {
+		utils.Fail(c, http.StatusBadRequest, "参数错误", nil)
+		return
+	}
+	if page.PageSize == 0 {
+		page.PageSize = 5
+	}
+	albums, err := services.AlbumNews(page.PageSize, page.Page)
+	if err != nil {
+		utils.Fail(c, 500, "内部错误", nil)
+		return
+	}
+	utils.Success(c, gin.H{
+		"data":        vo.ToAlbumVos(albums),
+		"currentPage": page.Page,
+		"pageSize":    page.PageSize,
+	}, "获取成功")
+}

@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/96368a/LuoYiMusic-server-api/model"
+	"math/rand"
+	"strconv"
+	"time"
 )
 
 func AddPlaylist(name string, status uint64, userId uint64) (model.Playlist, error) {
@@ -95,9 +98,27 @@ func PlaylistSongs(playlistId uint64) ([]model.Song, error) {
 		return nil, errors.New("歌单不存在")
 	}
 	var songs []model.Song
-	db := model.DB.Debug().Where("id in (?)", model.DB.Model(&model.PlaylistItems{}).Select("songId").Where("playlistId = ?", playlistId)).Find(&songs)
+	db := model.DB.Where("id in (?)", model.DB.Model(&model.PlaylistItems{}).Select("songId").Where("playlistId = ?", playlistId)).Find(&songs)
 	if db.Error != nil {
 		return nil, db.Error
 	}
 	return songs, nil
+}
+
+func RecommendPlaylists() ([]model.Playlist, error) {
+	var playlists []model.Playlist
+	newPlaylists := make([]model.Playlist, 20)
+	var count int64
+	model.DB.Find(&playlists).Count(&count)
+	time, err := strconv.Atoi(time.Now().Format("20060102"))
+	if err != nil {
+		return nil, err
+	}
+	rand.Seed(int64(time))
+	for i, _ := range newPlaylists {
+		newPlaylists[i] = playlists[rand.Intn(len(playlists))]
+		rand.Seed(int64(rand.Int()))
+	}
+
+	return newPlaylists, nil
 }
